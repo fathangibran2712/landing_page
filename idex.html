@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitPush — Belajar Git dengan Percaya Diri</title>
+  <meta name="description" content="GitPush membantu kamu belajar alur Git dari staging, commit, hingga push ke repository remote dengan cara yang sederhana." />
+
+  <style>
+    :root {
+      --bg: #0b1120;
+      --bg-soft: #101a2e;
+      --card: #131f33;
+      --border: #22304a;
+      --text: #e6edf7;
+      --muted: #9fb0c7;
+      --green: #22c55e;
+      --green-dark: #15803d;
+      --code-bg: #050b16;
+      --shadow: 0 20px 50px rgba(2, 8, 23, .45);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(circle at 85% 10%, rgba(34, 197, 94, .16), transparent 35%),
+        radial-gradient(circle at 10% 80%, rgba(56, 189, 248, .12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin-inline: auto;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(11, 17, 32, .82);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+
+    .logo-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--green), #0ea5e9);
+      color: #04140a;
+      font-weight: 900;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: .95rem;
+      transition: color .2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 24px;
+      border: 0;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--green), #16a34a);
+      color: #04140a;
+      box-shadow: 0 12px 30px rgba(34, 197, 94, .25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(34, 197, 94, .35);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      padding: 90px 0 80px;
+      overflow: hidden;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid rgba(34, 197, 94, .35);
+      border-radius: 999px;
+      background: rgba(34, 197, 94, .09);
+      color: #86efac;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      margin: 22px 0 18px;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      line-height: 1.05;
+      letter-spacing: -.045em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--green), #38bdf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      max-width: 540px;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 30px;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 34px;
+      margin-top: 42px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.5rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    /* Terminal */
+    .terminal {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 16px;
+      background: #0d1526;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .red { background: #ef4444; }
+    .yellow { background: #f59e0b; }
+    .green { background: #22c55e; }
+
+    .terminal-title {
+      margin-left: 10px;
+      color: var(--muted);
+      font-size: .8rem;
+    }
+
+    .terminal-body {
+      padding: 22px;
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+      font-size: .9rem;
+      line-height: 1.9;
+      overflow-x: auto;
+    }
+
+    .terminal-body .cmd {
+      color: #86efac;
+    }
+
+    .terminal-body .comment {
+      color: #64748b;
+    }
+
+    .terminal-body .success {
+      color: #38bdf8;
+    }
+
+    /* Sections */
+    section {
+      padding: 84px 0;
+    }
+
+    .section-head {
+      max-width: 640px;
+      margin-bottom: 44px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      letter-spacing: -.03em;
+      margin-bottom: 14px;
+    }
+
+    .section-head p {
+      color: var(--muted);
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      padding: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      transition: transform .25s ease, border-color .25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(34, 197, 94, .55);
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      background: rgba(34, 197, 94, .12);
+      color: var(--green);
+      font-size: 1.3rem;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .step {
+      position: relative;
+      padding: 28px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    .step-number {
+      display: inline-grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, .14);
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .step code {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      color: #86efac;
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+      font-size: .82rem;
+    }
+
+    /* CTA */
+    .cta {
+      padding: 30px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(34, 197, 94, .16), rgba(56, 189, 248, .12)),
+        var(--card);
+      border: 1px solid rgba(34, 197, 94, .3);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      letter-spacing: -.03em;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      max-width: 560px;
+      margin: 0 auto 26px;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    footer {
+      padding: 34px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-inner,
+      .grid-3,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links a:not(.btn) {
+        display: none;
+      }
+
+      .hero {
+        padding: 60px 0;
+      }
+
+      section {
+        padding: 64px 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .btn {
+        width: 100%;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .terminal-body {
+        font-size: .78rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <span class="logo-mark">G</span>
+        GitPush
+      </a>
+
+      <nav class="nav-links">
+        <a href="#fitur">Fitur</a>
+        <a href="#cara-kerja">Cara Kerja</a>
+        <a href="#mulai" class="btn btn-primary">Mulai Latihan</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <span class="badge">● Belajar Git &amp; GitHub</span>
+
+          <h1>
+            Push kode pertamamu<br />
+            <span>dengan percaya diri.</span>
+          </h1>
+
+          <p>
+            GitPush membantu kamu memahami alur Git dari staging area, commit,
+            hingga push ke repository remote. Cocok untuk pemula yang baru
+            memulai perjalanan sebagai developer.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#mulai" class="btn btn-primary">Mulai Latihan Push</a>
+            <a href="#cara-kerja" class="btn btn-ghost">Lihat Cara Kerja</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <strong>3 Langkah</strong>
+              <span>Alur Git dasar</span>
+            </div>
+            <div class="stat">
+              <strong>100%</strong>
+              <span>HTML &amp; CSS</span>
+            </div>
+            <div class="stat">
+              <strong>Git Ready</strong>
+              <span>Siap di-push</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">terminal — zsh</span>
+          </div>
+
+          <div class="terminal-body">
+            <div><span class="comment"># Tambahkan semua perubahan</span></div>
+            <div><span class="cmd">git add .</span></div>
+
+            <div><span class="comment"># Simpan perubahan ke commit</span></div>
+            <div><span class="cmd">git commit -m "feat: tambah landing page"</span></div>
+
+            <div><span class="comment"># Kirim ke repository GitHub</span></div>
+            <div><span class="cmd">git push origin main</span></div>
+
+            <div>&nbsp;</div>
+            <div><span class="success">✔ Everything up-to-date</span></div>
+            <div><span class="success">✔ Kamu berhasil push kode pertamamu!</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="fitur">
+      <div class="container">
+        <div class="section-head">
+          <h2>Kenapa pakai GitPush?</h2>
+          <p>
+            Belajar Git tidak harus terasa rumit. GitPush menyederhanakan
+            konsep penting agar kamu bisa fokus menulis kode dan berlatih.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="card">
+            <div class="icon">📦</div>
+            <h3>Staging Area</h3>
+            <p>
+              Pahami cara memilih perubahan yang ingin dimasukkan ke commit
+              sebelum kode dikirim ke repository.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🧾</div>
+            <h3>Commit History</h3>
+            <p>
+              Simpan riwayat perubahan proyek dengan pesan commit yang jelas,
+              rapi, dan mudah dipahami.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🚀</div>
+            <h3>Push ke Remote</h3>
+            <p>
+              Kirim pekerjaan lokal kamu ke GitHub agar kode tersimpan aman
+              dan bisa diakses dari mana saja.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="cara-kerja">
+      <div class="container">
+        <div class="section-head">
+          <h2>Cara kerja dalam 3 langkah</h2>
+          <p>
+            Ini alur dasar yang akan sering kamu gunakan saat mengerjakan
+            proyek dengan Git.
+          </p>
+        </div>
+
+        <div class="steps">
+          <article class="step">
+            <span class="step-number">1</span>
+            <h3>Tambahkan perubahan</h3>
+            <p>
+              Gunakan perintah ini untuk memasukkan file yang telah kamu ubah
+              ke staging area.
+            </p>
+            <code>git add .</code>
+          </article>
+
+          <article class="step">
+            <span class="step-number">2</span>
+            <h3>Buat commit</h3>
+            <p>
+              Simpan snapshot perubahan dengan pesan yang menjelaskan apa yang
+              kamu kerjakan.
+            </p>
+            <code>git commit -m "feat: tambah landing page"</code>
+          </article>
+
+          <article class="step">
+            <span class="step-number">3</span>
+            <h3>Push ke GitHub</h3>
+            <p>
+              Kirim commit dari komputer lokal kamu ke branch main di
+              repository remote.
+            </p>
+            <code>git push origin main</code>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="mulai">
+      <div class="container">
+        <div class="cta">
+          <h2>Siap push kode pertamamu?</h2>
+          <p>
+            Buka terminal, jalankan tiga perintah di atas, dan lihat proyek
+            landing page kamu tampil di GitHub.
+          </p>
+          <a href="#" class="btn btn-primary">Mulai Latihan Sekarang</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>© 2026 GitPush. Dibuat untuk latihan Git &amp; GitHub.</span>
+      <span>Made with HTML, CSS &amp; terminal.</span>
+    </div>
+  </footer>
+
+</body>
+</html>
